@@ -1,0 +1,33 @@
+services:
+  todo-db:
+    image: postgres:15-alpine
+    container_name: todo-db
+    platform: linux/amd64
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ./scripts/pg-init-db.sh
+        target: /docker-entrypoint-initdb.d/pg-init-db.sh
+        read_only: true
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME:-todo_db}
+      DB_USER: ${DB_USER:-admin}
+      DB_PASS: ${DB_PASS:-password}
+    expose:
+      - 5432
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${DB_USER} -d $${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
