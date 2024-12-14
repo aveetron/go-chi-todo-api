@@ -44,8 +44,8 @@ func (ts *TodoService) GetTodoByID(id int) (*models.TodoSchema, error) {
 	return ts.TodoRepository.GetTodoByID(id)
 }
 
-func (ts *TodoService) UpdateTodoByID(id int) (*models.TodoSchema, error) {
-	return ts.TodoRepository.UpdateTodoByID(id)
+func (ts *TodoService) UpdateTodoByID(id int, todo *models.TodoSchema) (*models.TodoSchema, error) {
+	return ts.TodoRepository.UpdateTodoByID(id, todo)
 }
 
 func (ts *TodoService) DeleteTodoByID(id int) error {

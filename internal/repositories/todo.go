@@ -10,7 +10,7 @@ type TodoRepository interface {
 	GetAllTodos() ([]*models.TodoSchema, error)
 	CreateTodo(*models.TodoSchema) error
 	GetTodoByID(id int) (*models.TodoSchema, error)
-	UpdateTodoByID(id int) (*models.TodoSchema, error)
+	UpdateTodoByID(id int, todo *models.TodoSchema) (*models.TodoSchema, error)
 	DeleteTodoByID(id int) error
 }
 
@@ -60,9 +60,8 @@ func (tr *TodoRepositoryImpl) GetTodoByID(id int) (*models.TodoSchema, error) {
 	return todo, nil
 }
 
-func (tr *TodoRepositoryImpl) UpdateTodoByID(id int) (*models.TodoSchema, error) {
+func (tr *TodoRepositoryImpl) UpdateTodoByID(id int, todo *models.TodoSchema) (*models.TodoSchema, error) {
 	query := "UPDATE todos SET title = $1, description = $2, is_done = $3 WHERE id = $4 RETURNING id, title, description, is_done, created_at"
-	todo := &models.TodoSchema{}
 
 	err := tr.db.QueryRow(query, todo.Title, todo.Description, todo.IsDone, id).
 		Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, &todo.CreatedAt)

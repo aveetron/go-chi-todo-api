@@ -104,7 +104,15 @@ func (th *TodoHandler) HandleUpdateTodoByID(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	todo, err := th.todoService.UpdateTodoByID(id)
+	// get the payload
+	todo := &models.TodoSchema{}
+	if err := json.NewDecoder(r.Body).Decode(todo); err != nil {
+		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	todo, err = th.todoService.UpdateTodoByID(id, todo)
 	if err != nil {
 		fmt.Errorf("Failed to update todo: %w", err)
 		return
