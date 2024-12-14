@@ -1,8 +1,8 @@
 package app
 
 import (
+	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 
 	"todo-api/pkg/config"
@@ -19,39 +19,31 @@ import (
 
 type App struct {
 	config *config.Config
+	db     *sql.DB
 }
 
-func NewApp(config *config.Config) *App {
+func NewApp(config *config.Config) (*App, error) {
 	// initialize db
-	_, err := db.NewPgDB(config.PGConfig)
+	pgDb, err := db.NewPgDB(config.PGConfig)
 	if err != nil {
 		panic(err)
 	}
 
 	return &App{
 		config: config,
-	}
+		db:     pgDb,
+	}, nil
 }
 
 func (a *App) Run() {
-	// Load the configuration (from a config file or environment variables)
-	cfg := config.PGConfig{
-		Host:     "localhost",
-		Port:     "5434",
-		User:     "postgres",
-		Password: "postgres",
-		DBNAME:   "todo_db",
-	}
-
-	// Initialize the PostgreSQL database
-	db, err := db.NewPgDB(cfg)
+	// init newApp
+	app, err := NewApp(a.config)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		panic(err)
 	}
-	defer db.Close()
 
 	// Initialize the TodoRepository
-	todoRepo := repository.NewTodoRepository(db)
+	todoRepo := repository.NewTodoRepository(app.db)
 
 	// Initialize the TodoService
 	todoService := services.NewTodoService(todoRepo)

@@ -13,6 +13,9 @@ func main() {
 	}
 
 	// run app
-	app := app.NewApp(cfg)
+	app, err := app.NewApp(cfg)
+	if err != nil {
+		panic(err)
+	}
 	app.Run()
 }

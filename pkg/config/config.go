@@ -15,7 +15,7 @@ type PGConfig struct {
 	Host     string `env:"PG_HOST" envDefault:"localhost"`
 	Port     string `env:"PG_PORT" envDefault:"5434"`
 	User     string `env:"PG_USER" envDefault:"postgres"`
-	DBNAME   string `env:"PG_DB_NAME" envDefault:"todoDb"`
+	DBNAME   string `env:"PG_DB_NAME" envDefault:"todo_db"`
 	Password string `env:"PG_PASS" envDefault:"postgres"`
 }
 
